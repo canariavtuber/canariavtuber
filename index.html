@@ -914,8 +914,7 @@
 
         return () => cleanupFunctions.forEach(cleanup => cleanup());
     };
-
-
+    
     const initializeProgressiveImageLoading = () => {
         const imageUrls = [
             'img/reel/1000008582.jpg',
@@ -923,11 +922,11 @@
             'img/reel/Canaria_1.png',
             'img/reel/skeb_by_qum.png'
         ];
-
+    
         const wrapper = document.querySelector('.background-image-wrapper');
         let currentIndex = 0;
         let images = [];
-
+    
         const loadImage = (url) => {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -936,63 +935,51 @@
                 img.onerror = reject;
             });
         };
-
+    
         const createBackgroundImage = (url) => {
             const img = document.createElement('img');
             img.className = 'background-image';
             img.alt = 'VTuber Background';
-            img.style.opacity = '0';
-            wrapper.insertBefore(img, wrapper.firstChild);
+            img.src = url;  // Set src immediately
+            wrapper.appendChild(img);  // Changed to appendChild for consistent ordering
             return img;
         };
-
+    
         const showImage = (imgElement) => {
-            imgElement.style.opacity = '0.6';
-            setTimeout(() => {
-                // Hide previous image
-                const prevImage = images[currentIndex - 1];
-                if (prevImage) {
-                    prevImage.style.opacity = '0';
-                    setTimeout(() => {
-                        prevImage.remove();
-                    }, 1000);
-                }
-            }, 1000);
+            // Hide all images first
+            images.forEach(img => {
+                img.classList.remove('active');
+            });
+            
+            // Show the current image
+            imgElement.classList.add('active');
         };
-
+    
         const loadImages = async () => {
             for (const url of imageUrls) {
                 try {
-                    // Create and append the image element immediately
+                    await loadImage(url);  // Preload the image
                     const imgElement = createBackgroundImage(url);
-
-                    // Start loading the image
-                    const loadedImg = await loadImage(url);
-
-                    // Once loaded, set the src and show it
-                    imgElement.src = loadedImg.src;
                     images.push(imgElement);
-
-                    if (currentIndex === 0) {
+    
+                    if (images.length === 1) {
+                        // Show the first image immediately
                         showImage(imgElement);
                     }
-                    currentIndex++;
-
                 } catch (error) {
                     console.error('Error loading image:', error);
                 }
             }
         };
-
+    
         // Start loading images immediately
         loadImages();
-
+    
         // Setup rotation of images
         setInterval(() => {
             if (images.length > 1) {
-                const nextIndex = (currentIndex) % images.length;
-                showImage(images[nextIndex]);
-                currentIndex = nextIndex;
+                currentIndex = (currentIndex + 1) % images.length;
+                showImage(images[currentIndex]);
             }
         }, 8000);
     };
