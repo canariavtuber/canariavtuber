@@ -67,18 +67,6 @@
             transition: transform 0.3s ease-out;
         }
 
-        .loading-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--background) 0%, #1a1a1a 50%, var(--background) 100%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            z-index: 0;
-        }
-
         @keyframes loading {
             0% {
                 background-position: 200% 0;
@@ -182,42 +170,6 @@
             padding: 0.8rem 1.2rem;
         }
 
-        .contact-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-
-        .contact-link {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--card-bg);
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .contact-link i {
-            font-size: 1.4rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .contact-link:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 105, 180, 0.5);
-            box-shadow: 0 0 20px rgba(155, 77, 224, 0.2);
-        }
-
         @media (max-width: 768px) {
             .links-grid {
                 grid-template-columns: 1fr;
@@ -300,35 +252,6 @@
             z-index: 1;
         }
 
-        /* Enhanced contact link styles */
-        .contact-link {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .contact-link:hover {
-            transform: translateY(-3px) scale(1.05);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2),
-            0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .contact-link i {
-            font-size: 1.4rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
         /* Section title enhancement */
         .section-title {
             position: relative;
@@ -375,11 +298,6 @@
 
         .social-link {
             animation: fadeInUp 0.6s ease backwards;
-        }
-
-        .contact-link {
-            animation: fadeInUp 0.6s ease backwards;
-            animation-delay: 0.8s;
         }
 
         .signature-img {
@@ -573,14 +491,12 @@
                     <i class="fa fa-coffee"></i>
                     <span>GamerSupps</span>
                 </a>
+                <div class="section-title">Community</div>
+                <a class="social-link" href="https://discord.gg/SjA94Nrq2P" target="_blank">
+                    <i class="fab fa-discord"></i>
+                    <span>Discord</span>
+                </a>
             </div>
-        </div>
-
-        <!-- Contact Links -->
-        <div class="contact-links">
-            <a class="contact-link" href="https://discord.gg/SjA94Nrq2P" target="_blank" title="Join Discord">
-                <i class="fab fa-discord"></i>
-            </a>
         </div>
     </div>
 </div>
@@ -721,114 +637,57 @@
         };
     };
 
-    // Add this to your existing styles
-    const addHeartStyles = () => {
-        const style = document.createElement('style');
-        style.textContent = `
-        .heart-particle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            font-size: 12px;
-            animation: float-and-fade 1.2s ease-out forwards;
-        }
-
-        @keyframes float-and-fade {
-            0% {
-                transform: translate(0, 0) scale(0.8) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(
-                    ${random(-20, 20)}px, 
-                    ${random(-50, -30)}px
-                ) scale(0) rotate(${random(-30, 30)}deg);
-                opacity: 0;
-            }
-        }
-    `;
-        document.head.appendChild(style);
-    };
-
-    // Heart creation and management
     const createHeartTrailSystem = () => {
-        // Share the color palette with butterflies
-        const colors = butterflyConfig.colors;
         const hearts = ['❤️', '💖', '💗', '💓', '💝'];
         let lastX = 0;
         let lastY = 0;
         let lastHeartTime = 0;
-
-        // Helper function to convert hex to HSL
-        const hexToHSL = (hex) => {
-            // Convert hex to RGB first
-            let r = parseInt(hex.slice(1, 3), 16) / 255;
-            let g = parseInt(hex.slice(3, 5), 16) / 255;
-            let b = parseInt(hex.slice(5, 7), 16) / 255;
-
-            // Find greatest and smallest channel values
-            let max = Math.max(r, g, b);
-            let min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
-
-            if (max === min) {
-                h = s = 0; // achromatic
-            } else {
-                let d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r:
-                        h = (g - b) / d + (g < b ? 6 : 0);
-                        break;
-                    case g:
-                        h = (b - r) / d + 2;
-                        break;
-                    case b:
-                        h = (r - g) / d + 4;
-                        break;
-                }
-                h /= 6;
-            }
-
-            return {
-                h: Math.round(h * 360),
-                s: Math.round(s * 100),
-                l: Math.round(l * 100)
-            };
-        };
-
-        // Helper function to create heart styles
-        const createHeartStyles = (x, y, color) => {
-            const hsl = hexToHSL(color);
-            // Adjust lightness to ensure visibility
-            const adjustedL = Math.min(Math.max(hsl.l + random(-10, 10), 40), 80);
-
-            return {
-                left: `${x}px`,
-                top: `${y}px`,
-                animationDuration: `${random(0.8, 1.4)}s`,
-                transform: `scale(${random(0.5, 0.8)})`,
-                color: `hsl(${hsl.h}, ${hsl.s}%, ${adjustedL}%)`,
-                // Add text shadow for better visibility
-                textShadow: `0 0 3px rgba(0,0,0,0.3)`
-            };
-        };
+        const minTimeBetweenHearts = 50; // Reduced delay for smoother animation
+        const maxActiveHearts = 50; // Increased max hearts
+        let activeHearts = 0;
 
         const createHeart = (x, y) => {
+            if (activeHearts >= maxActiveHearts) return;
+
             const heart = createElement('div', {
                 className: 'heart-particle',
                 textContent: hearts[Math.floor(random(0, hearts.length))]
             });
 
-            const color = colors[Math.floor(random(0, colors.length))];
-            const styles = createHeartStyles(x, y, color);
-            Object.assign(heart.style, styles);
+            Object.assign(heart.style, {
+                left: `${x}px`,
+                top: `${y}px`,
+                transform: `scale(${random(0.5, 0.8)})`,
+                opacity: '1'
+            });
 
             document.body.appendChild(heart);
-            heart.addEventListener('animationend', () => heart.remove(), {once: true});
+            activeHearts++;
+
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+                activeHearts--;
+            }, { once: true });
         };
 
-        const addEnhancedHeartStyles = () => {
+        // Simplified mouse move handler
+        const handleMouseMove = (e) => {
+            const currentTime = Date.now();
+            if (currentTime - lastHeartTime < minTimeBetweenHearts) return;
+
+            const x = e.clientX;
+            const y = e.clientY;
+            const distance = Math.hypot(x - lastX, y - lastY);
+
+            if (distance > 5) { // Reduced minimum distance for smoother trail
+                createHeart(x, y);
+                lastX = x;
+                lastY = y;
+                lastHeartTime = currentTime;
+            }
+        };
+
+        const addHeartStyles = () => {
             const style = document.createElement('style');
             style.textContent = `
             .heart-particle {
@@ -836,60 +695,28 @@
                 pointer-events: none;
                 z-index: 1000;
                 font-size: 12px;
+                will-change: transform, opacity;
                 animation: float-and-fade 1.2s ease-out forwards;
-                filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
             }
 
             @keyframes float-and-fade {
                 0% {
-                    transform: translate(0, 0) scale(0.8) rotate(0deg);
+                    transform: translate(0, 0) scale(1);
                     opacity: 1;
-                    filter: drop-shadow(0 0 3px rgba(255,255,255,0.4));
-                }
-                50% {
-                    opacity: 0.8;
-                    filter: drop-shadow(0 0 4px rgba(255,255,255,0.2));
                 }
                 100% {
-                    transform: translate(
-                        ${random(-20, 20)}px, 
-                        ${random(-50, -30)}px
-                    ) scale(0) rotate(${random(-30, 30)}deg);
+                    transform: translate(${random(-20, 20)}px, -40px) scale(0);
                     opacity: 0;
-                    filter: drop-shadow(0 0 5px rgba(255,255,255,0));
                 }
             }
         `;
             document.head.appendChild(style);
         };
 
-        const handleMouseMove = (e) => {
-            const currentTime = Date.now();
-            const x = e.clientX;
-            const y = e.clientY;
-
-            const distance = Math.hypot(x - lastX, y - lastY);
-
-            if (distance > 5 && currentTime - lastHeartTime > 50) {
-                // Create hearts with slight variations in position
-                const heartCount = Math.floor(random(1, 3));
-
-                for (let i = 0; i < heartCount; i++) {
-                    const offsetX = random(-5, 5);
-                    const offsetY = random(-5, 5);
-                    createHeart(x + offsetX, y + offsetY);
-                }
-
-                lastX = x;
-                lastY = y;
-                lastHeartTime = currentTime;
-            }
-        };
-
         return {
             start: () => {
-                addEnhancedHeartStyles();
-                document.addEventListener('mousemove', handleMouseMove);
+                addHeartStyles();
+                document.addEventListener('mousemove', handleMouseMove, { passive: true });
             },
             stop: () => {
                 document.removeEventListener('mousemove', handleMouseMove);
@@ -925,7 +752,7 @@
 
         return () => cleanupFunctions.forEach(cleanup => cleanup());
     };
-    
+
     const initializeProgressiveImageLoading = () => {
         const imageUrls = [
             'img/reel/1000008582.jpg',
@@ -933,11 +760,11 @@
             'img/reel/Canaria_1.png',
             'img/reel/skeb_by_qum.png'
         ];
-    
+
         const wrapper = document.querySelector('.background-image-wrapper');
         let currentIndex = 0;
         let images = [];
-    
+
         const loadImage = (url) => {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -946,7 +773,7 @@
                 img.onerror = reject;
             });
         };
-    
+
         const createBackgroundImage = (url) => {
             const img = document.createElement('img');
             img.className = 'background-image';
@@ -955,24 +782,24 @@
             wrapper.appendChild(img);  // Changed to appendChild for consistent ordering
             return img;
         };
-    
+
         const showImage = (imgElement) => {
             // Hide all images first
             images.forEach(img => {
                 img.classList.remove('active');
             });
-            
+
             // Show the current image
             imgElement.classList.add('active');
         };
-    
+
         const loadImages = async () => {
             for (const url of imageUrls) {
                 try {
                     await loadImage(url);  // Preload the image
                     const imgElement = createBackgroundImage(url);
                     images.push(imgElement);
-    
+
                     if (images.length === 1) {
                         // Show the first image immediately
                         showImage(imgElement);
@@ -982,10 +809,10 @@
                 }
             }
         };
-    
+
         // Start loading images immediately
         loadImages();
-    
+
         // Setup rotation of images
         setInterval(() => {
             if (images.length > 1) {
